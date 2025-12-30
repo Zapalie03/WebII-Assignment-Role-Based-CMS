@@ -118,9 +118,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ==================== DATABASE CONNECTION ====================
+// ==================== DATABASE CONNECTION ==================
 
-mongoose.connect(process.env.MONGODB_URI)
+const mongoURI = process.env.MONGO_URI || process.env.MONGODB_URI || "mongodb+srv://assignment:assignment123@cluster0.mongodb.net/cms_test?retryWrites=true&w=majority";
+
+mongoose.connect(mongoURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
   .then(() => {
     console.log('Connected to MongoDB Atlas');
     
@@ -142,5 +147,4 @@ Available endpoints:
   .catch((error) => {
     console.error('MongoDB connection error:', error.message);
   });
-
 module.exports = app;
