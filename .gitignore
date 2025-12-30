@@ -1,0 +1,20 @@
+﻿# =============== BACKEND ===============
+backend/node_modules/
+backend/.env
+backend/uploads/*           # Keep folder, ignore contents
+!backend/uploads/.gitkeep   # Keep empty .gitkeep to preserve folder
+backend/package-lock.json   # Optional - you can include or exclude
+
+# =============== FRONTEND ===============
+frontend/cms-frontend/node_modules/
+frontend/cms-frontend/dist/
+frontend/cms-frontend/.angular/
+
+# =============== UNIVERSAL ===============
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+yarn-debug.log*
+.DS_Store
+Thumbs.db

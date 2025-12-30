@@ -1,0 +1,109 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>📝 Articles Management</h2>
+    <div>
+      <button 
+        *ngIf="canCreateArticle()"
+        routerLink="/articles/create" 
+        class="btn btn-success me-2">
+        ➕ Create New Article
+      </button>
+      <button routerLink="/dashboard" class="btn btn-secondary">
+        ← Back to Dashboard
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading articles...</p>
+  </div>
+
+  <!-- No Articles -->
+  <div *ngIf="!isLoading && articles.length === 0" class="alert alert-info">
+    <h5>No articles found</h5>
+    <p *ngIf="userRole === 'Viewer'">
+      As a Viewer, you can only see published articles. 
+      No published articles are available yet.
+    </p>
+    <p *ngIf="userRole !== 'Viewer'">
+      No articles have been created yet. 
+      <a routerLink="/articles/create" class="alert-link">Create the first article</a>
+    </p>
+  </div>
+
+  <!-- Articles List -->
+  <div *ngIf="!isLoading && articles.length > 0" class="row">
+    <div class="col-md-12">
+      <div class="alert alert-secondary">
+        <strong>Role:</strong> {{userRole}} | 
+        <strong>Showing:</strong> {{articles.length}} article(s) |
+        <span *ngIf="userRole === 'Viewer'">(Published articles only)</span>
+      </div>
+      
+      <div class="list-group">
+        <div *ngFor="let article of articles" class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <div>
+              <h5 class="mb-1">
+                {{article.title}}
+                <span *ngIf="!article.isPublished" class="badge bg-warning text-dark ms-2">
+                  Draft
+                </span>
+                <span *ngIf="article.isPublished" class="badge bg-success ms-2">
+                  Published
+                </span>
+              </h5>
+              <small class="text-muted">
+                By: {{article.author.fullName}} | 
+                Created: {{article.createdAt | date:'medium'}}
+              </small>
+            </div>
+            <div class="btn-group">
+              <!-- View Button (Everyone) - FIXED with (click) -->
+              <button 
+                (click)="viewArticle(article)"
+                class="btn btn-sm btn-outline-primary">
+                👁️ View
+              </button>
+              
+              <!-- Edit Button (Conditional) - FIXED with (click) -->
+              <button 
+                *ngIf="canEditArticle(article)"
+                (click)="editArticle(article)"
+                class="btn btn-sm btn-outline-secondary ms-1">
+                ✏️ Edit
+              </button>
+              
+              <!-- Publish/Unpublish (Manager & SuperAdmin) -->
+              <button 
+                *ngIf="canPublishArticle()"
+                (click)="togglePublish(article)"
+                class="btn btn-sm ms-1"
+                [class]="article.isPublished ? 'btn-warning' : 'btn-success'">
+                {{article.isPublished ? '⛔ Unpublish' : '✅ Publish'}}
+              </button>
+              
+              <!-- Delete Button (Manager & SuperAdmin) -->
+              <button 
+                *ngIf="canDeleteArticle()"
+                (click)="deleteArticle(article._id)"
+                class="btn btn-sm btn-outline-danger ms-1">
+                🗑️ Delete
+              </button>
+            </div>
+          </div>
+          <p class="mb-1 mt-2">{{article.body.substring(0, 150)}}...</p>
+          
+          <!-- Article Image -->
+          <div *ngIf="article.imageUrl" class="mt-2">
+            <img [src]="article.imageUrl" alt="Article image" style="max-width: 200px; max-height: 150px;" class="img-thumbnail">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

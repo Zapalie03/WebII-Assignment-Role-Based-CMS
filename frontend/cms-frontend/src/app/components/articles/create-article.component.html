@@ -1,0 +1,115 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header" [class.bg-success]="!isEditMode" [class.bg-primary]="isEditMode">
+      <h4 class="mb-0 text-white">
+        {{ isEditMode ? '✏️ Edit Article' : '📝 Create New Article' }}
+      </h4>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="onSubmit()">
+        
+        <!-- Title -->
+        <div class="mb-3">
+          <label for="title" class="form-label">Article Title *</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="title"
+            [(ngModel)]="article.title"
+            name="title"
+            required
+            placeholder="Enter article title">
+          <div class="form-text">Make it descriptive and engaging</div>
+        </div>
+
+        <!-- Content -->
+        <div class="mb-3">
+          <label for="body" class="form-label">Article Content *</label>
+          <textarea 
+            class="form-control" 
+            id="body"
+            [(ngModel)]="article.body"
+            name="body"
+            rows="10"
+            required
+            placeholder="Write your article content here..."></textarea>
+          <div class="form-text">Support Markdown formatting</div>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="mb-4">
+          <label class="form-label">Article Image (Optional)</label>
+          
+          <!-- Image Preview -->
+          <div *ngIf="imagePreview" class="mb-3">
+            <img [src]="imagePreview" 
+                 alt="Preview" 
+                 class="img-thumbnail"
+                 style="max-width: 300px; max-height: 200px;">
+            <button type="button" 
+                    class="btn btn-sm btn-danger ms-2"
+                    (click)="removeImage()">
+              Remove Image
+            </button>
+          </div>
+
+          <!-- File Input -->
+          <div class="input-group">
+            <input 
+              type="file" 
+              class="form-control" 
+              id="image"
+              (change)="onImageSelected($event)"
+              accept="image/*">
+            <label class="input-group-text" for="image">
+              📁 Choose File
+            </label>
+          </div>
+          <div class="form-text">
+            Optional: Upload an image (JPEG, PNG, GIF) - Max 5MB
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Success Message -->
+        <div *ngIf="successMessage" class="alert alert-success">
+          {{ successMessage }}
+          <div class="spinner-border spinner-border-sm ms-2" role="status" *ngIf="isLoading">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="button" 
+                  class="btn btn-secondary"
+                  (click)="cancel()">
+            Cancel
+          </button>
+          
+          <button type="submit" 
+                  class="btn"
+                  [class]="isEditMode ? 'btn-primary' : 'btn-success'"
+                  [disabled]="isLoading || !article.title.trim() || !article.body.trim()">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+            {{ isLoading ? 'Processing...' : (isEditMode ? 'Update Article' : 'Create Article') }}
+          </button>
+        </div>
+
+        <!-- Role Information -->
+        <div class="alert alert-info mt-4">
+          <h6>📋 Role Permissions:</h6>
+          <ul class="mb-0">
+            <li><strong>SuperAdmin & Manager:</strong> Can create, edit, delete, and publish articles</li>
+            <li><strong>Contributor:</strong> Can create and edit own articles (cannot publish)</li>
+            <li><strong>Viewer:</strong> Can only view published articles</li>
+          </ul>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
